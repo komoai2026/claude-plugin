@@ -54,11 +54,13 @@ jobs:
 
       - name: Sanity check — versions match the tag
         run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          VERSION="${TAG#v}"
           MCP=$(node -p "require('./packages/mcp-server/package.json').version")
           PLUGIN=$(node -p "require('./plugins/kolmopdf/.claude-plugin/plugin.json').version")
           MARKET=$(node -p "require('./.claude-plugin/marketplace.json').plugins[0].version")
-          echo "tag=$tag mcp=$MCP plugin=$PLUGIN marketplace=$MARKET"
-          test "$tag" = "$MCP" && test "$tag" = "$PLUGIN" && test "$tag" = "$MARKET" \
+          echo "tag=$TAG version=$VERSION mcp=$MCP plugin=$PLUGIN marketplace=$MARKET"
+          test "$VERSION" = "$MCP" && test "$VERSION" = "$PLUGIN" && test "$VERSION" = "$MARKET" \
             || (echo "::error::version mismatch between tag and manifests" && exit 1)
 
       - run: pnpm -r build
