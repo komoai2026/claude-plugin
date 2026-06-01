@@ -1,0 +1,86 @@
+#!/bin/sh
+# .husky/pre-commit
+# Auto-sync version from root package.json to all manifest files.
+# Root package.json is the canonical version source.
+# Sub-manifests synced:
+#   packages/mcp-server/package.json
+#   plugins/kolmopdf/.claude-plugin/plugin.json
+#   .claude-plugin/marketplace.json (version at plugins[0].version)
+
+SUB_MANIFESTS="packages/mcp-server/package.json plugins/kolmopdf/.claude-plugin/plugin.json .claude-plugin/marketplace.json"
+
+# Helper: read JSON from stdin, extract version string.
+# Handles both top-level .version (most files) and plugins[0].version (marketplace.json).
+extract_version() {
+  node -e "
+    let buf = '';
+    process.stdin.on('data', c => buf += c);
+    process.stdin.on('end', () => {
+      try {
+        const json = JSON.parse(buf);
+        const v = json.version || (json.plugins && json.plugins[0] && json.plugins[0].version);
+        if (v) process.stdout.write(v);
+      } catch (_) { process.exit(1); }
+    });
+  "
+}
+
+# ── Check whether root package.json is staged ────────────────────────
+ROOT_STAGED=$(git diff --cached --name-only | grep -c "^package.json$" || true)
+ROOT_STAGED=$(echo "$ROOT_STAGED" | tr -d '[:space:]')
+[ -z "$ROOT_STAGED" ] && ROOT_STAGED=0
+
+if [ "$ROOT_STAGED" -gt 0 ]; then
+  # Root is staged — extract the staged (index) version
+  STAGED_VER=$(git show :package.json | extract_version) || {
+    echo "pre-commit: ERROR — could not read version from staged package.json"
+    exit 1
+  }
+
+  # Has the version changed from HEAD?
+  HEAD_VER=$(git show HEAD:package.json 2>/dev/null | extract_version) || HEAD_VER=""
+
+  if [ "$STAGED_VER" != "$HEAD_VER" ]; then
+    echo "pre-commit: version $HEAD_VER → $STAGED_VER — syncing all manifests"
+
+    STAGED_VER="$STAGED_VER" node -e "
+      const fs = require('fs');
+      const v = process.env.STAGED_VER;
+      const files = [
+        'packages/mcp-server/package.json',
+        'plugins/kolmopdf/.claude-plugin/plugin.json',
+        '.claude-plugin/marketplace.json',
+      ];
+      for (const f of files) {
+        const old = fs.readFileSync(f, 'utf8');
+        // Match \"version\": \"<anything>\" — preserves exact whitespace and quoting
+        const re = /(\"version\"\s*:\s*\")[^\"]+(\")/;
+        const next = old.replace(re, '\$1' + v + '\$2');
+        if (next !== old) {
+          fs.writeFileSync(f, next);
+          console.log('  synced ' + f);
+        }
+      }
+    "
+
+    git add $SUB_MANIFESTS
+    echo "pre-commit: done — sub-manifests staged"
+  fi
+  # else: root staged but version unchanged (e.g. description edit), no-op
+else
+  # ── Root NOT staged — reject if any sub-manifest has a version change ──
+  for f in $SUB_MANIFESTS; do
+    STAGED_VER=$(git show :"$f" 2>/dev/null | extract_version) || continue
+    HEAD_VER=$(git show HEAD:"$f" 2>/dev/null | extract_version) || continue
+    if [ -n "$STAGED_VER" ] && [ -n "$HEAD_VER" ] && [ "$STAGED_VER" != "$HEAD_VER" ]; then
+      echo "pre-commit: ERROR — '$f' is staged with a version change"
+      echo "           ($HEAD_VER → $STAGED_VER), but root package.json is not."
+      echo "           The root package.json is the canonical version source."
+      echo "           Stage root package.json with the same version first,"
+      echo "           or unstage '$f'."
+      exit 1
+    fi
+  done
+fi
+
+exit 0
