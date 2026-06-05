@@ -12,7 +12,7 @@
       "displayName": "KolmoPDF",
       "source": "./plugins/kolmopdf",
       "description": "High-fidelity PDF to Markdown parsing, layout-preserving PDF translation, and Markdown format conversion.",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "author": { "name": "KomoAI LLC", "email": "support@kolmopdf.com" },
       "homepage": "https://www.kolmopdf.com",
       "repository": "https://github.com/komoai2026/claude-plugin",

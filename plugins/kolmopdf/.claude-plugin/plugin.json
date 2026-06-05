@@ -3,7 +3,7 @@
   "name": "kolmopdf",
   "displayName": "KolmoPDF",
   "description": "High-fidelity PDF to Markdown parsing, layout-preserving PDF translation, and Markdown→DOCX/HTML/PDF/LaTeX conversion. Handles formulas, tables, and multi-column layouts that the built-in Read tool struggles with.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": {
     "name": "KomoAI LLC",
     "email": "support@kolmopdf.com"
