@@ -1,6 +1,6 @@
 {
   "name": "@kolmopdf/mcp-server",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MCP server for KolmoPDF — PDF parsing, layout-preserving translation, and Markdown format conversion.",
   "license": "MIT",
   "type": "module",
@@ -48,7 +48,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kolmopdf/claude-plugin.git",
+    "url": "https://github.com/komoai2026/claude-plugin.git",
     "directory": "packages/mcp-server"
   }
 }
