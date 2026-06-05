@@ -47,7 +47,7 @@ claude plugin install kolmopdf@kolmopdf
 ```bash
 # 1. 克隆 skill 到 Codex 标准路径
 mkdir -p ~/.codex/skills
-git clone --depth 1 https://github.com/kolmopdf/claude-plugin /tmp/kolmopdf
+git clone --depth 1 https://github.com/komoai2026/claude-plugin /tmp/kolmopdf
 cp -r /tmp/kolmopdf/codex-skill/kolmopdf ~/.codex/skills/
 
 # 2. 注册 MCP server（Codex 不自动读取 plugin .mcp.json）
