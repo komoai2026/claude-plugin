@@ -1,4 +1,4 @@
-import { createWriteStream, mkdirSync } from "node:fs";
+import { createWriteStream, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { pipeline } from "node:stream/promises";
 import { type Entry, type ZipFile, open as yauzlOpen } from "yauzl";
@@ -10,12 +10,36 @@ export interface ExtractResult {
   files: string[];
 }
 
+/** Prefer primary document MD over enrichment sidecars (outline/summary/etc.). */
+export function pickPrimaryMarkdownPath(
+  candidates: Array<{ path: string; entryName: string; size: number }>,
+): string | null {
+  if (candidates.length === 0) return null;
+  const scored = candidates.map((c) => {
+    const base = (c.entryName.split("/").pop() || c.entryName).toLowerCase();
+    let score = c.size;
+    if (
+      /^(outline|summary|verification_report|enrichment_meta|tables_changelog|tables_normalized)(\.|$)/i.test(
+        base,
+      ) ||
+      /outline|summary|verification|enrichment|tables_/.test(base)
+    ) {
+      score -= 1e12;
+    }
+    if (base === "readme.md") score -= 1e9;
+    if (/translated|bilingual/.test(base)) score -= 1e6;
+    return { path: c.path, score };
+  });
+  scored.sort((a, b) => b.score - a.score);
+  return scored[0]?.path ?? null;
+}
+
 export async function extractZip(zipPath: string, destDir: string): Promise<ExtractResult> {
   mkdirSync(destDir, { recursive: true });
 
   const zipFile = await openZip(zipPath);
   const files: string[] = [];
-  let markdownPath: string | null = null;
+  const mdCandidates: Array<{ path: string; entryName: string; size: number }> = [];
   let imagesDir: string | null = null;
 
   for await (const entry of iterEntries(zipFile)) {
@@ -35,8 +59,14 @@ export async function extractZip(zipPath: string, destDir: string): Promise<Extr
     await pipeline(readStream, writeStream);
     files.push(entryPath);
 
-    if (!markdownPath && /\.md$/i.test(entry.fileName)) {
-      markdownPath = entryPath;
+    if (/\.md$/i.test(entry.fileName)) {
+      let size = entry.uncompressedSize || 0;
+      try {
+        size = readFileSync(entryPath).byteLength;
+      } catch {
+        /* keep zip header size */
+      }
+      mdCandidates.push({ path: entryPath, entryName: entry.fileName, size });
     }
     if (!imagesDir && /images\//i.test(entry.fileName)) {
       const prefix = entry.fileName.split("images/")[0] ?? "";
@@ -44,8 +74,11 @@ export async function extractZip(zipPath: string, destDir: string): Promise<Extr
     }
   }
 
+  const markdownPath = pickPrimaryMarkdownPath(mdCandidates);
+
   return { markdownPath, imagesDir, outputRoot: destDir, files };
 }
+
 function openZip(path: string): Promise<ZipFile> {
   return new Promise((resolve, reject) => {
     yauzlOpen(path, { lazyEntries: true }, (err, zf) => {

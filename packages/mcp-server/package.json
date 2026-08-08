@@ -1,6 +1,6 @@
 {
   "name": "@kolmopdf/mcp-server",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "MCP server for KolmoPDF — PDF parsing, layout-preserving translation, and Markdown format conversion.",
   "license": "MIT",
   "type": "module",

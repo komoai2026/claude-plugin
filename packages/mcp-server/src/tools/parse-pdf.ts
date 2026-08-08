@@ -1,5 +1,5 @@
 import { createWriteStream, mkdirSync } from "node:fs";
-import { readFile } from "node:fs/promises";
+import { readFile, rename } from "node:fs/promises";
 import { basename, join, resolve } from "node:path";
 import { z } from "zod";
 import type { McpSuccessResult, ToolContext } from "../context.js";
@@ -13,7 +13,8 @@ export const parsePdfName = "kolmopdf_parse_pdf";
 
 export const parsePdfDescription =
   "Parse a local PDF into Markdown via KolmoPDF. Handles formulas, tables, " +
-  "multi-column layouts, and code blocks. Optionally translates while parsing.";
+  "multi-column layouts, and code blocks. Optionally translates while parsing. " +
+  "Server may attach outline.md/summary.md sidecars (ZIP download).";
 
 export const parsePdfInputSchema = z.object({
   file_path: z.string().describe("Absolute or cwd-relative path to a local PDF file."),
@@ -25,6 +26,12 @@ export const parsePdfInputSchema = z.object({
   images_as_url: z.boolean().optional(),
   skip_rotation_detection: z.boolean().optional(),
   enable_cross_page_merge: z.boolean().optional(),
+  enrichment: z
+    .string()
+    .optional()
+    .describe(
+      "Parse-time AI sidecars. Omit for server default outline,summary. Use 'none' to disable. Examples: outline,summary,verification",
+    ),
   output_subdir: z
     .string()
     .optional()
@@ -79,6 +86,7 @@ export async function parsePdfHandler(
       images_as_url: args.images_as_url,
       skip_rotation_detection: args.skip_rotation_detection,
       enable_cross_page_merge: args.enable_cross_page_merge,
+      enrichment: args.enrichment,
     },
     filename,
   );
@@ -102,25 +110,27 @@ export async function parsePdfHandler(
   const outputRoot = resolve(ctx.config.outputDir, subdir);
   mkdirSync(outputRoot, { recursive: true });
 
-  const isUrlMode = args.images_as_url === true;
+  // Always download to a temp name first — server may return ZIP even when images_as_url
+  // (enrichment sidecars force a multi-file bundle).
+  const downloadPath = join(outputRoot, "download.bin");
+  const ws = createWriteStream(downloadPath);
+  const meta = await client.download(taskId, ws, { destPath: downloadPath });
 
   let markdownPath: string;
   let imagesDir: string | null = null;
   let outputType: "zip_extracted" | "markdown_file";
 
-  if (isUrlMode) {
-    markdownPath = join(outputRoot, "result.md");
-    const ws = createWriteStream(markdownPath);
-    await client.download(taskId, ws);
-    outputType = "markdown_file";
-  } else {
+  if (meta.isZip) {
     const zipPath = join(outputRoot, "result.zip");
-    const ws = createWriteStream(zipPath);
-    await client.download(taskId, ws);
+    await rename(downloadPath, zipPath);
     const extracted = await extractZip(zipPath, outputRoot);
     markdownPath = extracted.markdownPath || join(outputRoot, "result.md");
     imagesDir = extracted.imagesDir;
     outputType = "zip_extracted";
+  } else {
+    markdownPath = join(outputRoot, "result.md");
+    await rename(downloadPath, markdownPath);
+    outputType = "markdown_file";
   }
 
   const mdContent = await readFile(markdownPath, "utf-8").catch(() => "");

@@ -50,7 +50,7 @@ import {
   translatePdfName,
 } from "./tools/translate-pdf.js";
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
 
 /** Build the per-call tool context with a lazily-constructed API client. */
 function buildContext(): ToolContext {

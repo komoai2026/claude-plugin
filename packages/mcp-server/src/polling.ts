@@ -7,9 +7,15 @@ export interface PollOptions {
   maxPollMinutes: number;
 }
 
-export const TERMINAL_OK = "completed";
-export const TERMINAL_FAIL = "failed";
-export const IN_FLIGHT_STATUSES = new Set(["pending", "waiting", "processing"]);
+/** v1 success; legacy `completed` still accepted */
+export const TERMINAL_OK = new Set(["succeeded", "completed"]);
+export const TERMINAL_FAIL = new Set(["failed", "cancelled"]);
+export const IN_FLIGHT_STATUSES = new Set([
+  "queued",
+  "pending",
+  "waiting",
+  "processing",
+]);
 
 export const RETRY_POLICY = {
   maxAttempts: 3,
@@ -65,13 +71,14 @@ export async function pollUntilComplete(ctx: PollContext): Promise<StatusResult>
     }
 
     const result = await fetchStatusWithRetry(client, taskId);
+    const status = String(result.status || "");
 
-    if (result.status === TERMINAL_OK) {
+    if (TERMINAL_OK.has(status)) {
       await progress?.report(`[completed] Task ${taskId} done`);
       return result;
     }
 
-    if (result.status === TERMINAL_FAIL) {
+    if (TERMINAL_FAIL.has(status)) {
       throw new KolmoPdfError(result.error_code || "api_task_error", {
         message: result.message || "Task failed",
       });
