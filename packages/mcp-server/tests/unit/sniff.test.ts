@@ -10,7 +10,9 @@ describe("sniffBytes", () => {
   });
   it("detects docx via word/document.xml inside zip", () => {
     expect(
-      sniffBytes(Buffer.concat([Buffer.from([0x50, 0x4b, 0x03, 0x04]), Buffer.from("word/document.xml")])),
+      sniffBytes(
+        Buffer.concat([Buffer.from([0x50, 0x4b, 0x03, 0x04]), Buffer.from("word/document.xml")]),
+      ),
     ).toBe("docx");
   });
   it("detects markdown headings", () => {
@@ -21,7 +23,9 @@ describe("sniffBytes", () => {
       sniffBytes(
         Buffer.concat([
           Buffer.from([0x50, 0x4b, 0x03, 0x04]),
-          Buffer.from("[Content_Types].xml application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
+          Buffer.from(
+            "[Content_Types].xml application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          ),
         ]),
       ),
     ).toBe("docx");

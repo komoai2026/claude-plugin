@@ -5,9 +5,9 @@ import { z } from "zod";
 import type { McpSuccessResult, ToolContext } from "../context.js";
 import { jsonResult } from "../context.js";
 import { KolmoPdfError } from "../errors.js";
+import { extractZip } from "../extract.js";
 import { MAX_FILE_BYTES, MAX_PAGES, readFileSize, readPageCount } from "../pages.js";
 import { pollUntilComplete } from "../polling.js";
-import { extractZip } from "../extract.js";
 import { extensionForKind, sniffFile } from "../sniff.js";
 
 export const translatePdfName = "kolmopdf_translate_pdf";

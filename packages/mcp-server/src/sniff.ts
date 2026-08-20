@@ -40,8 +40,10 @@ export function sniffBytes(buf: Uint8Array): SniffKind {
   const head = Buffer.from(buf.subarray(0, Math.min(buf.length, 800))).toString("utf8");
   const trimmed = head.trimStart().toLowerCase();
   if (trimmed.startsWith("<!doctype html") || trimmed.startsWith("<html")) return "html";
-  if (trimmed.startsWith("\\documentclass") || trimmed.startsWith("\\begin{document}")) return "latex";
-  if (head.trimStart().startsWith("#") || head.includes("\n# ") || head.includes("\n```")) return "markdown";
+  if (trimmed.startsWith("\\documentclass") || trimmed.startsWith("\\begin{document}"))
+    return "latex";
+  if (head.trimStart().startsWith("#") || head.includes("\n# ") || head.includes("\n```"))
+    return "markdown";
   return "binary";
 }
 
@@ -56,7 +58,11 @@ export async function sniffFile(filePath: string): Promise<SniffKind> {
   }
 }
 
-export async function renameBySniff(tempPath: string, destDir: string, stem: string): Promise<{
+export async function renameBySniff(
+  tempPath: string,
+  destDir: string,
+  stem: string,
+): Promise<{
   path: string;
   kind: SniffKind;
 }> {

@@ -136,7 +136,11 @@ async function waitViaSse(ctx: PollContext, deadline: number): Promise<StatusRes
   } catch (err) {
     if (err instanceof KolmoPdfError) {
       const code = err.errorCode;
-      if (code !== "api_task_error" && code !== "client_network_error" && code !== "client_polling_timeout") {
+      if (
+        code !== "api_task_error" &&
+        code !== "client_network_error" &&
+        code !== "client_polling_timeout"
+      ) {
         throw err;
       }
     }
