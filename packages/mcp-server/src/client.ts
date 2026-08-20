@@ -1,7 +1,7 @@
+import { randomUUID } from "node:crypto";
 import type { Writable } from "node:stream";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { randomUUID } from "node:crypto";
 import { KolmoPdfError, errorFromApiBody } from "./errors.js";
 
 export interface KolmoPdfClientOptions {
@@ -312,7 +312,11 @@ export class KolmoPdfClient {
           const head = Buffer.concat(firstChunks);
           if (head.byteLength >= 4) {
             // ZIP local file header magic "PK\x03\x04"
-            if (head[0] === 0x50 && head[1] === 0x4b && (head[2] === 0x03 || head[2] === 0x05 || head[2] === 0x07)) {
+            if (
+              head[0] === 0x50 &&
+              head[1] === 0x4b &&
+              (head[2] === 0x03 || head[2] === 0x05 || head[2] === 0x07)
+            ) {
               isZip = true;
             } else if (!contentType?.includes("zip")) {
               isZip = false;

@@ -10,12 +10,7 @@ export interface PollOptions {
 /** v1 success; legacy `completed` still accepted */
 export const TERMINAL_OK = new Set(["succeeded", "completed"]);
 export const TERMINAL_FAIL = new Set(["failed", "cancelled"]);
-export const IN_FLIGHT_STATUSES = new Set([
-  "queued",
-  "pending",
-  "waiting",
-  "processing",
-]);
+export const IN_FLIGHT_STATUSES = new Set(["queued", "pending", "waiting", "processing"]);
 
 export const RETRY_POLICY = {
   maxAttempts: 3,
