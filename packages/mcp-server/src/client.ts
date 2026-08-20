@@ -57,13 +57,24 @@ export interface SubmitResult {
   queue_info?: { position: number; ahead_tasks: number };
 }
 
+export interface JobResultMeta {
+  task_id: string;
+  download_url?: string;
+  filename?: string | null;
+  kind?: string | null;
+  content_type?: string | null;
+  sha256?: string | null;
+  bytes?: number | null;
+  files?: Array<{ name: string; kind: string }> | null;
+}
+
 export interface StatusResult {
   success: boolean;
   status: TaskStatus | string;
   message?: string;
   queue_info?: { position: number; ahead_tasks: number };
   error_code?: string;
-  result?: { task_id: string; download_url: string };
+  result?: JobResultMeta;
 }
 
 export interface DownloadMeta {
@@ -248,7 +259,7 @@ export class KolmoPdfClient {
     const status = normalizeStatus(String(body.status ?? "processing"));
     const err = body.error as { code?: string; message?: string } | null | undefined;
     const queue = body.queue as { ahead?: number; position?: number } | null | undefined;
-    const result = body.result as { download_url?: string } | null | undefined;
+    const result = body.result as JobResultMeta | null | undefined;
 
     const ok = status === "succeeded" || status === "completed";
     return {
@@ -260,10 +271,38 @@ export class KolmoPdfClient {
         queue && typeof queue.ahead === "number"
           ? { position: queue.position ?? 0, ahead_tasks: queue.ahead }
           : undefined,
-      result: result?.download_url
-        ? { task_id: taskId, download_url: result.download_url }
+      result: result
+        ? {
+            task_id: taskId,
+            download_url: result.download_url,
+            filename: result.filename ?? null,
+            kind: result.kind ?? null,
+            content_type: result.content_type ?? null,
+            sha256: result.sha256 ?? null,
+            bytes: result.bytes ?? null,
+            files: result.files ?? null,
+          }
         : undefined,
     };
+  }
+
+  /** SSE stream for a job. Caller must abort/cancel the response body. */
+  async openEvents(taskId: string, signal?: AbortSignal): Promise<Response> {
+    const res = await fetch(`${this.jobsBase}/${encodeURIComponent(taskId)}/events`, {
+      method: "GET",
+      headers: {
+        ...this.headers(),
+        Accept: "text/event-stream",
+      },
+      signal,
+    });
+    if (!res.ok) {
+      throw new KolmoPdfError("api_task_error", {
+        message: `SSE failed with HTTP ${res.status}`,
+        httpStatus: res.status,
+      });
+    }
+    return res;
   }
 
   /**

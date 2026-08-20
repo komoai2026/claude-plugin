@@ -1,5 +1,5 @@
 import { createWriteStream, mkdirSync } from "node:fs";
-import { readFile } from "node:fs/promises";
+import { readFile, rename } from "node:fs/promises";
 import { basename, join, resolve } from "node:path";
 import { z } from "zod";
 import type { McpSuccessResult, ToolContext } from "../context.js";
@@ -7,12 +7,14 @@ import { jsonResult } from "../context.js";
 import { KolmoPdfError } from "../errors.js";
 import { MAX_FILE_BYTES, MAX_PAGES, readFileSize, readPageCount } from "../pages.js";
 import { pollUntilComplete } from "../polling.js";
+import { extractZip } from "../extract.js";
+import { extensionForKind, sniffFile } from "../sniff.js";
 
 export const translatePdfName = "kolmopdf_translate_pdf";
 
 export const translatePdfDescription =
   "Translate a PDF while preserving its original layout via KolmoPDF. " +
-  "Produces a translated PDF (optionally side-by-side bilingual).";
+  "Produces a translated PDF, or a ZIP of PDFs when multiple layout modes are requested.";
 
 export const translatePdfInputSchema = z.object({
   file_path: z.string(),
@@ -35,7 +37,9 @@ export interface TranslatePdfOutput {
   points_deducted: number;
   remaining_points: number;
   output: {
+    kind: string;
     translated_pdf_path: string;
+    archive_path?: string;
   };
 }
 
@@ -84,15 +88,27 @@ export async function translatePdfHandler(
     progress: ctx.progress,
   });
 
-  await ctx.progress?.report("[downloading] Fetching translated PDF...");
+  await ctx.progress?.report("[downloading] Fetching translated result...");
 
   const subdir = args.output_subdir || taskId;
   const outputRoot = resolve(ctx.config.outputDir, subdir);
   mkdirSync(outputRoot, { recursive: true });
 
-  const pdfPath = join(outputRoot, "translated.pdf");
-  const ws = createWriteStream(pdfPath);
-  await client.download(taskId, ws);
+  const tempPath = join(outputRoot, "download.bin");
+  const ws = createWriteStream(tempPath);
+  await client.download(taskId, ws, { destPath: tempPath });
+
+  const kind = await sniffFile(tempPath);
+  let translatedPdfPath = join(outputRoot, `translated${extensionForKind(kind)}`);
+  let archivePath: string | undefined;
+  await rename(tempPath, translatedPdfPath);
+
+  if (kind === "zip") {
+    archivePath = translatedPdfPath;
+    const extracted = await extractZip(archivePath, outputRoot);
+    const pdfs = extracted.files.filter((f) => f.toLowerCase().endsWith(".pdf"));
+    if (pdfs[0]) translatedPdfPath = pdfs[0];
+  }
 
   const pagesTranslated = Math.round(submitResult.points_deducted / 2);
 
@@ -102,7 +118,9 @@ export async function translatePdfHandler(
     points_deducted: submitResult.points_deducted,
     remaining_points: submitResult.remaining_points,
     output: {
-      translated_pdf_path: pdfPath,
+      kind,
+      translated_pdf_path: translatedPdfPath,
+      ...(archivePath ? { archive_path: archivePath } : {}),
     },
   };
 

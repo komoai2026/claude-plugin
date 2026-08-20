@@ -1,5 +1,5 @@
 import { createWriteStream, mkdirSync } from "node:fs";
-import { readFile } from "node:fs/promises";
+import { readFile, rename } from "node:fs/promises";
 import { basename, join, resolve } from "node:path";
 import { z } from "zod";
 import type { McpSuccessResult, ToolContext } from "../context.js";
@@ -7,6 +7,7 @@ import { jsonResult } from "../context.js";
 import { KolmoPdfError } from "../errors.js";
 import { MAX_FILE_BYTES, readFileSize } from "../pages.js";
 import { pollUntilComplete } from "../polling.js";
+import { extensionForKind, sniffFile } from "../sniff.js";
 
 export const convertName = "kolmopdf_convert_markdown";
 
@@ -31,6 +32,7 @@ export interface ConvertOutput {
   output: {
     output_path: string;
     target_format: string;
+    kind: string;
   };
 }
 
@@ -111,10 +113,12 @@ export async function convertHandler(
   const outputRoot = resolve(ctx.config.outputDir, subdir);
   mkdirSync(outputRoot, { recursive: true });
 
-  const outExt = formatToExtension(args.target_format);
-  const outputPath = join(outputRoot, `result${outExt}`);
-  const ws = createWriteStream(outputPath);
-  await client.download(taskId, ws);
+  const tempPath = join(outputRoot, "download.bin");
+  const ws = createWriteStream(tempPath);
+  await client.download(taskId, ws, { destPath: tempPath });
+  const kind = await sniffFile(tempPath);
+  const outputPath = join(outputRoot, `result${extensionForKind(kind)}`);
+  await rename(tempPath, outputPath);
 
   const output: ConvertOutput = {
     task_id: taskId,
@@ -123,6 +127,7 @@ export async function convertHandler(
     output: {
       output_path: outputPath,
       target_format: normalizeFormat(args.target_format),
+      kind,
     },
   };
 

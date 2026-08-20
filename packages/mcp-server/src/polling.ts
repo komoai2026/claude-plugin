@@ -56,9 +56,65 @@ async function fetchStatusWithRetry(client: KolmoPdfClient, taskId: string): Pro
   throw new KolmoPdfError("client_network_error");
 }
 
+async function waitViaSse(ctx: PollContext, deadline: number): Promise<StatusResult | null> {
+  const { client, taskId, progress } = ctx;
+  const remaining = Math.max(1_000, deadline - Date.now());
+  const controller = new AbortController();
+  const killer = setTimeout(() => controller.abort(), remaining);
+  try {
+    const res = await client.openEvents(taskId, controller.signal);
+    const body = res.body;
+    if (!body) return null;
+    const reader = body.getReader();
+    const decoder = new TextDecoder();
+    let buf = "";
+    while (Date.now() < deadline) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      let sep: number;
+      while ((sep = buf.indexOf("\n\n")) >= 0) {
+        const raw = buf.slice(0, sep);
+        buf = buf.slice(sep + 2);
+        let eventName = "message";
+        for (const line of raw.split("\n")) {
+          if (line.startsWith("event:")) eventName = line.slice(6).trim();
+        }
+        if (eventName === "job.succeeded") {
+          await progress?.report(`[completed] Task ${taskId} done`);
+          return fetchStatusWithRetry(client, taskId);
+        }
+        if (eventName === "job.failed" || eventName === "job.cancelled") {
+          const failed = await fetchStatusWithRetry(client, taskId);
+          throw new KolmoPdfError(failed.error_code || eventName.slice("job.".length), {
+            message: failed.message || "Task failed",
+          });
+        }
+        if (eventName === "job.progress" || eventName === "job.snapshot") {
+          await progress?.report(humanizeStatus("processing"));
+        }
+      }
+    }
+    return null;
+  } catch (err) {
+    if (err instanceof KolmoPdfError) {
+      const code = err.errorCode;
+      if (code !== "api_task_error" && code !== "client_network_error" && code !== "client_polling_timeout") {
+        throw err;
+      }
+    }
+    return null;
+  } finally {
+    clearTimeout(killer);
+  }
+}
+
 export async function pollUntilComplete(ctx: PollContext): Promise<StatusResult> {
   const { client, taskId, options, progress } = ctx;
   const deadline = Date.now() + options.maxPollMinutes * 60_000;
+
+  const viaSse = await waitViaSse(ctx, deadline);
+  if (viaSse) return viaSse;
 
   while (true) {
     if (Date.now() > deadline) {
