@@ -294,7 +294,7 @@ export class KolmoPdfClient {
         ...this.headers(),
         Accept: "text/event-stream",
       },
-      signal,
+      ...(signal === undefined ? {} : { signal }),
     });
     if (!res.ok) {
       throw new KolmoPdfError("api_task_error", {

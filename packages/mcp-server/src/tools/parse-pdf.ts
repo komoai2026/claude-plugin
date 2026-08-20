@@ -8,6 +8,7 @@ import { KolmoPdfError } from "../errors.js";
 import { extractZip } from "../extract.js";
 import { MAX_FILE_BYTES, MAX_PAGES, readFileSize, readPageCount } from "../pages.js";
 import { pollUntilComplete } from "../polling.js";
+import { sniffFile } from "../sniff.js";
 
 export const parsePdfName = "kolmopdf_parse_pdf";
 
@@ -111,16 +112,17 @@ export async function parsePdfHandler(
   mkdirSync(outputRoot, { recursive: true });
 
   // Always download to a temp name first — server may return ZIP even when images_as_url
-  // (enrichment sidecars force a multi-file bundle).
+  // (enrichment sidecars force a multi-file bundle). Trust magic bytes, not Content-Type.
   const downloadPath = join(outputRoot, "download.bin");
   const ws = createWriteStream(downloadPath);
-  const meta = await client.download(taskId, ws, { destPath: downloadPath });
+  await client.download(taskId, ws, { destPath: downloadPath });
 
   let markdownPath: string;
   let imagesDir: string | null = null;
   let outputType: "zip_extracted" | "markdown_file";
 
-  if (meta.isZip) {
+  const kind = await sniffFile(downloadPath);
+  if (kind === "zip") {
     const zipPath = join(outputRoot, "result.zip");
     await rename(downloadPath, zipPath);
     const extracted = await extractZip(zipPath, outputRoot);
