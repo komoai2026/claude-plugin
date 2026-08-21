@@ -56,11 +56,13 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          # Node 24 bundles npm >= 11.5.1, the minimum npm CLI for Trusted Publishing.
+          # Node 24 bundles npm >= 11.5.1, which pnpm's publish delegates to and
+          # which performs the Trusted Publishing (OIDC) token exchange.
           node-version: 24
           registry-url: "https://registry.npmjs.org"
           # No cache in release builds (npm's guidance: a poisoned cache could run
           # attacker code with OIDC credentials).
+          package-manager-cache: false
 
       - run: pnpm install --frozen-lockfile
 
@@ -76,13 +78,13 @@ jobs:
             || (echo "::error::version mismatch between tag and manifests" && exit 1)
 
       - run: pnpm -r build
-      - run: npm ci
 
-      # npm Trusted Publishing (OIDC): with `id-token: write`, the npm CLI
+      # npm Trusted Publishing (OIDC) via pnpm: `pnpm publish` delegates the
+      # actual publish to the npm CLI, and the npm CLI bundled with Node 24
       # (>= 11.5.1) exchanges this job's GitHub Actions OIDC token for a
       # short-lived npm publish token automatically — no NPM_TOKEN secret.
       # One-time setup on npmjs.com → package → Settings → Trusted Publisher:
       #   GitHub owner: komoai2026, repo: claude-plugin, workflow: release.yml
-      - name: Publish @kolmopdf/mcp-server via Trusted Publishing
+      - name: Publish @kolmopdf/mcp-server via Trusted Publishing (pnpm)
         working-directory: packages/mcp-server
-        run: npm publish --access public
+        run: pnpm publish --access public --no-git-checks
