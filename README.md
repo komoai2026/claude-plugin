@@ -9,8 +9,7 @@ High-fidelity PDF→Markdown parsing, layout-preserving PDF translation, and Mar
 ## Install (Claude Code)
 
 ```
-/plugin marketplace add kolmopdf/claude-plugin
-/plugin install kolmopdf@kolmopdf
+/plugin marketplace add komoai2026/claude-plugin
 ```
 
 Then set `KOLMOPDF_API_KEY` in your environment and restart Claude Code.
