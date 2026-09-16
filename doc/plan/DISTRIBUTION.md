@@ -10,7 +10,7 @@
 | # | 项 | 状态 |
 |---|---|---|
 | 1 | npm 组织 `@kolmopdf` 已注册并 access=public | ☐ |
-| 2 | GitHub org `kolmopdf` 已创建，repo `kolmopdf/claude-plugin` 已 public | ☐ |
+| 2 | GitHub 账号 `komoai2026` 下的 `claude-plugin` 仓库已公开 | ☐ |
 | 3 | `LICENSE` 文件存在（MIT） | ☐ |
 | 4 | 顶层 `README.md` 完整 | ☐ |
 | 5 | `.claude-plugin/marketplace.json` 通过 `claude plugin validate .` | ☐ |
@@ -83,7 +83,7 @@ The built-in `Read` tool caps at 20 pages and loses formulas, tables, and multi-
 ## Install (Claude Code)
 
 ```
-/plugin marketplace add kolmopdf/claude-plugin
+/plugin marketplace add komoai2026/claude-plugin
 /plugin install kolmopdf@kolmopdf
 ```
 
@@ -102,7 +102,7 @@ MIT
 
 ```bash
 # 在 GitHub 控制台
-1. Create new public repository: kolmopdf/claude-plugin
+1. Create new public repository: komoai2026/claude-plugin
 2. Push monorepo content
 3. Set repo description: "KolmoPDF plugin for Claude Code — PDF parsing, translation, and format conversion."
 4. Set repo website: https://www.kolmopdf.com
@@ -121,7 +121,7 @@ MIT
 
 | 客户端 | 命令 |
 |---|---|
-| Claude Code | `/plugin marketplace add kolmopdf/claude-plugin` then `/plugin install kolmopdf@kolmopdf` |
+| Claude Code | `/plugin marketplace add komoai2026/claude-plugin` then `/plugin install kolmopdf@kolmopdf` |
 | Codex CLI | 见 TESTING_AND_USAGE.md §2.2 |
 | Cursor | 见 TESTING_AND_USAGE.md §2.3 |
 | Claude Desktop | 见 TESTING_AND_USAGE.md §2.4 |
@@ -130,7 +130,7 @@ MIT
 
 ```bash
 # 从另一台机器/容器：
-claude plugin marketplace add kolmopdf/claude-plugin
+claude plugin marketplace add komoai2026/claude-plugin
 claude plugin install kolmopdf@kolmopdf
 # 然后跑 TESTING_AND_USAGE.md §3 的全套验证
 ```
@@ -158,7 +158,7 @@ claude plugin install kolmopdf@kolmopdf
 | 字段 | 我们填写 |
 |---|---|
 | Plugin name | `kolmopdf` |
-| GitHub repo URL | `https://github.com/kolmopdf/claude-plugin` |
+| GitHub repo URL | `https://github.com/komoai2026/claude-plugin` |
 | Plugin path in repo | `plugins/kolmopdf` |
 | Maintainer name | `KomoAI LLC` |
 | Maintainer email | `support@kolmopdf.com` |

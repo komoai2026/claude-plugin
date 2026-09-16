@@ -1,24 +1,30 @@
 # KolmoPDF for Claude Code
 
 [![npm version](https://img.shields.io/npm/v/@kolmopdf/mcp-server)](https://www.npmjs.com/package/@kolmopdf/mcp-server)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub release](https://img.shields.io/github/v/release/komoai2026/claude-plugin)](https://github.com/komoai2026/claude-plugin/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 
 High-fidelity PDF→Markdown parsing, layout-preserving PDF translation, and Markdown→DOCX/HTML/PDF/LaTeX conversion — delivered as a Claude Code plugin, a Codex CLI / Cursor skill, and a standalone MCP server.
 
 ## Install (Claude Code)
 
-```
+Adding a marketplace and installing a plugin are separate steps:
+
+```text
 /plugin marketplace add komoai2026/claude-plugin
+/plugin install kolmopdf@kolmopdf
 ```
 
-Then set `KOLMOPDF_API_KEY` in your environment and restart Claude Code.
+Set `KOLMOPDF_API_KEY` in your environment, then restart Claude Code:
 
 ```bash
 export KOLMOPDF_API_KEY=sk-xxxxxxxxxxxxxxxx
 ```
 
 Other clients (Codex CLI, Cursor, Claude Desktop): see [`doc/plan/TESTING_AND_USAGE.md`](doc/plan/TESTING_AND_USAGE.md) §2.
+
+The standalone skill is also available from [`komoai2026/kolmopdf-skill`](https://github.com/komoai2026/kolmopdf-skill).
 
 ## Tools
 
@@ -59,4 +65,4 @@ pnpm build
 
 ## License
 
-MIT
+[MIT](LICENSE)

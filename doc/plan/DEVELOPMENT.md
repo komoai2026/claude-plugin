@@ -27,7 +27,7 @@ Image OCR、Markdown Translation、AI PPT、PDF Merge/Split、首跑赠送积分
 |---|---|---|---|
 | A | npm 包 | `@kolmopdf/mcp-server` | npm registry |
 | B | Skill 目录 | `skills/kolmopdf/SKILL.md` (+ supporting refs) | 包含在 Plugin 内 |
-| C | Claude Code Plugin | `plugins/kolmopdf/` | GitHub marketplace `kolmopdf/claude-plugin` |
+| C | Claude Code Plugin | `plugins/kolmopdf/` | GitHub marketplace `komoai2026/claude-plugin` |
 | D | Marketplace 入口 | `.claude-plugin/marketplace.json` | GitHub repo root |
 | E | Codex CLI 单文件 Skill | 同 B 内容，独立分发路径 `~/.codex/skills/kolmopdf/` | 同 GitHub repo（路径不同） |
 
@@ -35,7 +35,7 @@ Image OCR、Markdown Translation、AI PPT、PDF Merge/Split、首跑赠送积分
 
 ## 2. 仓库结构
 
-GitHub repo: `kolmopdf/claude-plugin`（新建，pnpm workspaces monorepo）。
+GitHub repo: `komoai2026/claude-plugin`（pnpm workspaces monorepo）。
 
 ```
 kolmopdf-claude-plugin/
@@ -158,7 +158,7 @@ kolmopdf-claude-plugin/
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/kolmopdf/claude-plugin.git",
+    "url": "https://github.com/komoai2026/claude-plugin.git",
     "directory": "packages/mcp-server"
   }
 }
@@ -588,7 +588,7 @@ After successful tool calls, treat `output.markdown_path` / `output.translated_p
     "email": "support@kolmopdf.com"
   },
   "homepage": "https://www.kolmopdf.com",
-  "repository": "https://github.com/kolmopdf/claude-plugin",
+  "repository": "https://github.com/komoai2026/claude-plugin",
   "license": "MIT",
   "keywords": [
     "pdf", "markdown", "ocr", "translation", "latex",
@@ -760,7 +760,7 @@ Plugin 内 command 调用形式：`/kolmopdf:parse`, `/kolmopdf:translate`, `/ko
       "version": "1.0.0",
       "author": { "name": "KomoAI LLC", "email": "support@kolmopdf.com" },
       "homepage": "https://www.kolmopdf.com",
-      "repository": "https://github.com/kolmopdf/claude-plugin",
+      "repository": "https://github.com/komoai2026/claude-plugin",
       "license": "MIT",
       "keywords": ["pdf", "markdown", "ocr", "translation", "latex", "research"],
       "category": "document-processing",
@@ -776,7 +776,7 @@ Plugin 内 command 调用形式：`/kolmopdf:parse`, `/kolmopdf:translate`, `/ko
 
 ```bash
 # Claude Code
-/plugin marketplace add kolmopdf/claude-plugin
+/plugin marketplace add komoai2026/claude-plugin
 /plugin install kolmopdf@kolmopdf
 
 # 环境变量（用户自己设置）
@@ -796,7 +796,7 @@ CI 中将 `plugins/kolmopdf/skills/kolmopdf/` 整体复制到 `codex-skill/kolmo
 ```bash
 # Codex CLI（不走 plugin，直接放 skill 目录）
 mkdir -p ~/.codex/skills
-git clone --depth 1 https://github.com/kolmopdf/claude-plugin /tmp/kolmopdf
+git clone --depth 1 https://github.com/komoai2026/claude-plugin /tmp/kolmopdf
 cp -r /tmp/kolmopdf/codex-skill/kolmopdf ~/.codex/skills/
 
 # MCP server 通过 ~/.codex/config.toml 或 Codex 推荐方式独立配置：

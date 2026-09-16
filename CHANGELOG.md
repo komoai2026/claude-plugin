@@ -6,12 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Added
+## [1.1.1] — 2026-09-16
 
-- Initial monorepo scaffold: `@kolmopdf/mcp-server` package, Claude Code plugin,
-  KolmoPDF skill, marketplace entry, Codex CLI skill mirror, CI/CD workflows.
+### Changed
 
-## [1.1.0] — 2026-08-08
+- Documented the required two-step Claude Code installation flow: add the marketplace, then install the plugin.
+- Standardized repository links on `komoai2026/claude-plugin` and linked the standalone `kolmopdf-skill` distribution.
+- Marked the workspace root as a private monorepo package with a distinct package name.
+- Standardized the default branch on `main` and removed the redundant tag-only workflow.
+
+### Content
+
+- KolmoPDF tools, skill instructions, and API behavior are unchanged.
+
+## [1.1.0] — 2026-08-21
 
 ### Changed
 
@@ -23,3 +31,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `getStatus.success` is true only for succeeded/completed (not cancelled).
 - Skill rewritten **API-first** (curl Jobs v1); MCP tools optional; glossary documents enrichment.
 - Package / plugin version `1.1.0`.
+
+## [1.0.0] — 2026-05-22
+
+### Added
+
+- Initial monorepo scaffold: `@kolmopdf/mcp-server`, Claude Code plugin, KolmoPDF skill, marketplace entry, Codex CLI skill mirror, and CI/CD workflows.

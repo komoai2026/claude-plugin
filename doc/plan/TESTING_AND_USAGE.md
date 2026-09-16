@@ -27,7 +27,7 @@ export KOLMOPDF_API_KEY=sk-xxxxxxxxxxxxxxxx
 
 ```bash
 # 1. 添加 marketplace
-/plugin marketplace add kolmopdf/claude-plugin
+/plugin marketplace add komoai2026/claude-plugin
 
 # 2. 安装 plugin
 /plugin install kolmopdf@kolmopdf
@@ -38,7 +38,7 @@ export KOLMOPDF_API_KEY=sk-xxxxxxxxxxxxxxxx
 非交互安装（脚本场景）：
 
 ```bash
-claude plugin marketplace add kolmopdf/claude-plugin
+claude plugin marketplace add komoai2026/claude-plugin
 claude plugin install kolmopdf@kolmopdf
 ```
 

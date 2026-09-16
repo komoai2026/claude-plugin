@@ -1,10 +1,8 @@
 {
-  "name": "@kolmopdf/mcp-server",
-  "version": "1.1.0",
-  "private": false,
-  "description": "KolmoPDF plugin monorepo for Claude Code, Codex CLI, and Cursor.",
-  "main": "packages/mcp-server/dist/index.js",
-  "types": "packages/mcp-server/dist/index.d.ts",
+  "name": "@kolmopdf/claude-plugin-monorepo",
+  "version": "1.1.1",
+  "private": true,
+  "description": "KolmoPDF plugin monorepo for Claude Code, Codex CLI, Cursor, and the standalone MCP server.",
   "license": "MIT",
   "type": "module",
   "engines": {
