@@ -1,6 +1,6 @@
 {
   "name": "@kolmopdf/claude-plugin-monorepo",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "KolmoPDF plugin monorepo for Claude Code, Codex CLI, Cursor, and the standalone MCP server.",
   "license": "MIT",

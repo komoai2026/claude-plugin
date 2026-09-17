@@ -14,11 +14,9 @@
 
 Create a key at https://www.kolmopdf.com/api-keys (requires Plus or Pro), then set `KOLMOPDF_API_KEY` in your environment.
 
-## Task routing
+## Usage
 
-The user need not mention KolmoPDF. PDF conversion/parsing/translation and Markdown export use the credit-aware processing route. PDF summarization, reading, analysis, extraction, and Q&A also activate the skill: reuse reliable local text, or offer high-fidelity cloud parsing with an estimate and ask before upload when useful. Respect offline/no-upload choices. See [SKILL.md](skills/kolmopdf/SKILL.md).
-
-The skill and slash commands can call Jobs API v1 through Bash/curl without MCP. MCP tools are optional wrappers, not a prerequisite.
+Supports PDF conversion, translation, reading, summaries, analysis, and Q&A. See [SKILL.md](skills/kolmopdf/SKILL.md) for routing, cost, and API instructions.
 
 ## Tools
 

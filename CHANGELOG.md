@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.1] — 2026-09-17
+
+### Changed
+
+- Consolidated task routing, costs, and API instructions in the main skill.
+- Shortened recipes, commands, and READMEs to their operational purpose.
+- Made balance queries conditional and file-signature checks troubleshooting-only.
+- Preserved conversion and reading routes, cost approval, direct API support, and synchronized skill distributions.
+
+MCP runtime source is unchanged; its version follows the plugin release.
+
 ## [1.2.0] — 2026-09-17
 
 ### Fixed
