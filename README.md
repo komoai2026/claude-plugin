@@ -26,6 +26,25 @@ Other clients (Codex CLI, Cursor, Claude Desktop): see [`doc/plan/TESTING_AND_US
 
 The standalone skill is also available from [`komoai2026/kolmopdf-skill`](https://github.com/komoai2026/kolmopdf-skill).
 
+## Task routing (no brand name required)
+
+| Request | Behavior |
+| --- | --- |
+| "把PDF转成Markdown", PDF parsing/OCR, PDF translation, Markdown export | Uses KolmoPDF with a cloud/credit estimate; no requirement to name the service. Confirms once above 50 credits or if cost is unknown. |
+| "总结这个PDF", read/analyze a paper, extract tables, PDF Q&A | Activates the skill. Reuses adequate text; offers high-fidelity cloud parsing with an estimate when structure/extraction quality warrants it and asks before upload. |
+| Simple, fully readable local PDF or existing Markdown | Reads locally without unnecessary paid parsing. |
+| Offline/no upload, or another provider explicitly selected | Respects the user's choice; does not upload to KolmoPDF. |
+
+Skill activation and a paid API call are separate decisions. For reading tasks, approving cloud parsing and its total estimate once is sufficient. After parsing, the agent completes the requested summary or analysis, not just a file conversion.
+
+### Without MCP
+
+```bash
+npx skills add komoai2026/kolmopdf-skill
+```
+
+Configure `KOLMOPDF_API_KEY` in the agent's shell environment. The standalone skill uses Jobs API v1 directly through Bash/curl; MCP is optional. See the [skill instructions](plugins/kolmopdf/skills/kolmopdf/SKILL.md) and [chain recipes](plugins/kolmopdf/skills/kolmopdf/references/chain-recipes.md).
+
 ## Tools
 
 | Tool | Capability |

@@ -1,6 +1,6 @@
 # KolmoPDF Claude Plugin — 测试与使用文档
 
-> 本文件供发布后用户安装、内部团队 QA、和 CI smoke test 共用。
+> 当前路由规则见 [SKILL.md](../../plugins/kolmopdf/skills/kolmopdf/SKILL.md)，触发验收场景见 [ROUTING.md](../ROUTING.md)。下文 §3–9 是历史 MCP 集成测试计划，不代表每次用户请求都需调用 MCP、付费解析或执行整套测试。
 > 所有命令以 macOS / Linux 为基准；Windows 用户改用 PowerShell 等价命令。
 
 ## 1. 前置条件
@@ -50,7 +50,7 @@ mkdir -p ~/.codex/skills
 git clone --depth 1 https://github.com/komoai2026/claude-plugin /tmp/kolmopdf
 cp -r /tmp/kolmopdf/codex-skill/kolmopdf ~/.codex/skills/
 
-# 2. 注册 MCP server（Codex 不自动读取 plugin .mcp.json）
+# 2. 可选：注册 MCP server；独立 Skill 可直接通过 Bash/curl 调用 API，无需此步骤
 # 编辑 ~/.codex/config.toml，追加：
 ```
 
@@ -72,7 +72,7 @@ env = { KOLMOPDF_API_KEY = "sk-..." }
 mkdir -p ~/.cursor/skills
 cp -r /tmp/kolmopdf/codex-skill/kolmopdf ~/.cursor/skills/
 
-# 2. MCP server 注册：编辑 ~/.cursor/mcp.json
+# 2. 可选 MCP server 注册：编辑 ~/.cursor/mcp.json；不配置也可直接调用 API
 ```
 
 ```json

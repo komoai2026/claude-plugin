@@ -1,5 +1,7 @@
 # KolmoPDF Claude Code Plugin — 开发规范
 
+> **历史设计文档（v1.0），不是当前触发或运行规范。** 下文的内嵌 Skill 示例、旧 API 路径、强制解析与 MCP 要求不得用于覆盖现行实现。当前唯一的 Skill 路由依据是 [SKILL.md](../../plugins/kolmopdf/skills/kolmopdf/SKILL.md)，使用说明见 [README](../../README.md)。
+>
 > Spec version: 1.0 · 目标客户端: Claude Code · Codex CLI · Cursor (兼容 SKILL.md 的客户端皆可)
 
 ## 0. 范围

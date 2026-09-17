@@ -6,6 +6,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-09-17
+
+### Fixed
+
+- Removed the brand-name gate: ordinary PDF conversion/parsing/translation and Markdown export requests activate KolmoPDF.
+- PDF summarization, reading, analysis, extraction, and Q&A now activate the skill and assess whether existing/local text is sufficient or cloud parsing should be offered.
+- Reading tasks obtain one approval covering cloud parsing and estimated cost when useful, rather than silently skipping KolmoPDF or automatically uploading every PDF.
+- Cost confirmation applies to the total workflow/batch; previously approved scope is not confirmed again. Offline/no-upload and explicit provider choices are respected.
+- Chain recipes and all four slash commands work through the direct Jobs API without requiring MCP.
+- Removed placeholder-key overwrites from the executable parse example and clarified server artifacts versus agent-written summaries.
+- Synchronized the plugin skill, Codex/Cursor mirror, standalone distribution, installation guidance, and routing scenarios; marked legacy design documents as historical.
+
+MCP runtime source and API implementations are unchanged. The package version follows the coordinated plugin release.
+
 ## [1.1.1] — 2026-09-16
 
 ### Changed

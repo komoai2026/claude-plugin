@@ -1,14 +1,14 @@
 ---
 description: Convert Markdown to DOCX, HTML, PDF, or LaTeX (KolmoPDF).
 argument-hint: <markdown-or-zip-path> [--format word|docx|html|pdf|latex|tex]
-allowed-tools: mcp__kolmopdf__kolmopdf_convert_markdown, mcp__kolmopdf__kolmopdf_estimate_cost
+allowed-tools: Bash, Read, Write, mcp__kolmopdf__kolmopdf_convert_markdown, mcp__kolmopdf__kolmopdf_estimate_cost, mcp__kolmopdf__kolmopdf_check_balance
 ---
 
-Convert the provided Markdown file (or ZIP archive containing markdown + images) to the target format. Steps:
+Read the KolmoPDF skill at `../skills/kolmopdf/SKILL.md` relative to this command file and follow its cost and download protocol.
 
-1. Parse arguments. Default `--format word`.
-2. Call `kolmopdf_estimate_cost` for operation `convert` (always 1 credit). Stop if insufficient.
-3. Call `kolmopdf_convert_markdown`.
-4. Report `output.output_path` to the user.
+1. Parse the Markdown/ZIP path and target format. Default: `word`.
+2. Estimate 1 credit per conversion and check balance; use the whole workflow or batch total for the 50-credit confirmation threshold. Respect any no-upload constraint.
+3. Use `POST /api/v1/jobs/convert` via Bash/curl with `file` and `targetFormat`, or optional `kolmopdf_convert_markdown` with `file_path` and `target_format`. Do not require MCP installation or a repeated provider-name request.
+4. Wait for success and download using the declared filename/kind. Report the actual result path.
 
 Arguments: $ARGUMENTS

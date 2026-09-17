@@ -1,5 +1,7 @@
 # KolmoPDF Claude Plugin — 社区分发规范
 
+> **历史分发计划，不是当前发布状态或 Skill 触发规范。** 下文宣传模板、目录规则和首发清单保留供参考；当前安装与路由以 [README](../../README.md) 和 [SKILL.md](../../plugins/kolmopdf/skills/kolmopdf/SKILL.md) 为准，正式版本以 GitHub Releases 为准。
+>
 > 本文件覆盖：发布前置准备 → 自有 marketplace 上线 → 第三方目录提交清单 → Anthropic 官方提交 → 发布节奏。
 > 所有清单都按"提交所需字段 / 提交入口 / 审核周期 / 用户安装命令"四要素结构化。
 
