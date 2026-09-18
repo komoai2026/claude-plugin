@@ -53,8 +53,9 @@ Configure `KOLMOPDF_API_KEY` in the agent's shell environment. The standalone sk
 ## Requirements
 
 - Node.js ≥ 20
-- KolmoPDF Plus or Pro account ([sign up](https://www.kolmopdf.com))
-- API key from [API Management](https://www.kolmopdf.com/api-keys)
+- KolmoPDF account ([sign up](https://www.kolmopdf.com)); a subscription is not required
+- API key from [API Management](https://www.kolmopdf.com/api-keys): Free, PAYG, Go, and Plus support one key; Pro supports up to ten
+- Sufficient processing credits; Web, API, and MCP share the same balance. [One-time credits](https://www.kolmopdf.com/credits) are available without subscribing.
 
 ## Repository layout
 

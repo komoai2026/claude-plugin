@@ -350,7 +350,7 @@ z.object({
   current_balance: number,                   // 调用 GET /balance
   sufficient: boolean,
   shortfall: number,                         // = max(0, estimated_credits - current_balance)
-  recommendation: string                     // 例如 "Sufficient" / "Need top-up at https://www.kolmopdf.com/subscription"
+  recommendation: string                     // 例如 "Sufficient" / "Need top-up at https://www.kolmopdf.com/credits"
 }
 ```
 
@@ -486,7 +486,7 @@ You have access to KolmoPDF tools (prefix `kolmopdf_*`) for high-fidelity PDF pa
 Before running any operation that consumes credits:
 
 1. Call `kolmopdf_estimate_cost` with the file path and intended operation.
-2. If `sufficient` is false: stop and report `shortfall` and the top-up URL `https://www.kolmopdf.com/subscription` to the user. Do not proceed.
+2. If `sufficient` is false: stop and report `shortfall` and the top-up URL `https://www.kolmopdf.com/credits` to the user. Do not proceed.
 3. If `estimated_credits > 50`: tell the user the estimated cost and ask for confirmation before proceeding.
 4. Otherwise: proceed.
 
@@ -494,7 +494,7 @@ Before running any operation that consumes credits:
 
 Tools require `KOLMOPDF_API_KEY` in the MCP server environment. If a tool returns `invalid_api_key`:
 
-- Direct the user to https://www.kolmopdf.com/api-keys to create a key (requires Plus or Pro plan).
+- Direct the user to https://www.kolmopdf.com/api-keys to create a key (no subscription required; Free/PAYG/Go/Plus: one key, Pro: up to ten).
 - Tell the user to set `KOLMOPDF_API_KEY` in their environment and restart Claude Code.
 - Do not proceed with retries until the user confirms.
 
@@ -714,8 +714,8 @@ Plugin 内 command 调用形式：`/kolmopdf:parse`, `/kolmopdf:translate`, `/ko
 
 | error_code | source | HTTP | 是否扣分 | MCP 抛出 message | 建议 remediation |
 |---|---|---|---|---|---|
-| `invalid_api_key` | API | 401 | 否 | "API key is missing or invalid." | "Create a key at https://www.kolmopdf.com/api-keys (requires Plus/Pro)." |
-| `insufficient_points` | API | 402 | 否 | "Not enough credits." | "Top up at https://www.kolmopdf.com/subscription." |
+| `invalid_api_key` | API | 401 | 否 | "API key is missing or invalid." | "Create a key at https://www.kolmopdf.com/api-keys (no subscription required)." |
+| `insufficient_points` | API | 402 | 否 | "Not enough credits." | "Top up at https://www.kolmopdf.com/credits." |
 | `points_deduction_failed` | API | 402 | 否 | "Credit deduction failed." | "Retry; if persists contact support." |
 | `no_file_found` | API | 400 | 否 | "Request missing file field." | "(internal) MCP server bug, please report." |
 | `parse_file_too_large` | API | 400 | 否 | "PDF exceeds 300MB." | "Split the PDF locally." |

@@ -12,7 +12,9 @@
 
 ## API key
 
-Create a key at https://www.kolmopdf.com/api-keys (requires Plus or Pro), then set `KOLMOPDF_API_KEY` in your environment.
+Create a key at https://www.kolmopdf.com/api-keys, then configure `KOLMOPDF_API_KEY` privately in the environment used to launch your agent. A subscription is not required: Free, PAYG, Go, and Plus support one key; Pro supports up to ten. Web, API, and MCP share credits. If needed, buy one-time credits at https://www.kolmopdf.com/credits.
+
+Do not paste the key into a conversation or commit it to a project. An already-running agent does not inherit changes made in another terminal; restart from the configured environment or use the client's private settings. Check setup with the balance tool, not a paid document-processing job.
 
 ## Usage
 

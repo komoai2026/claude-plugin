@@ -8,9 +8,9 @@
 | 项 | 要求 |
 |---|---|
 | Node.js | ≥ 20 LTS |
-| KolmoPDF 账户 | Plus 或 Pro 套餐（Free / Go 用户无 API 权限） |
+| KolmoPDF 账户 | 无需订阅；Free / PAYG / Go / Plus 可创建 1 个 API Key，Pro 最多 10 个 |
 | API Key | 已在 https://www.kolmopdf.com/api-keys 创建 |
-| 积分 | 测试用 ≥ 200（足够跑完整套用例） |
+| 积分 | 仅安装／认证检查不消耗处理积分；下文历史收费集成测试按所选任务估算，不默认执行整套用例 |
 | 网络 | 可访问 `https://www.kolmopdf.com` |
 
 环境变量设置：
@@ -224,7 +224,7 @@ export KOLMOPDF_API_KEY=sk-invalid
 |---|
 | `kolmopdf_estimate_cost` 返回 `sufficient=false`, `shortfall=195` |
 | Agent 应停止而不直接发起 parse |
-| 提示用户去 `https://www.kolmopdf.com/subscription` |
+| 提示用户去 `https://www.kolmopdf.com/credits` |
 
 ### 5.3 E3: 文件 > 300MB
 

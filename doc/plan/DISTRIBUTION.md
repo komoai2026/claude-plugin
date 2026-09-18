@@ -79,7 +79,7 @@ The built-in `Read` tool caps at 20 pages and loses formulas, tables, and multi-
 ## Requirements
 
 - Node.js ≥ 20
-- KolmoPDF Plus or Pro account ([sign up](https://www.kolmopdf.com))
+- KolmoPDF account ([sign up](https://www.kolmopdf.com)); no subscription required. Free/PAYG/Go/Plus: one API key; Pro: up to ten.
 - API key from [API Management](https://www.kolmopdf.com/api-keys)
 
 ## Install (Claude Code)
