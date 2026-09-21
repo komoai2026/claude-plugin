@@ -8,6 +8,6 @@ Follow `../skills/kolmopdf/SKILL.md` relative to this command file.
 
 Parse the supplied PDF. With `--translate`, set `enable_translation=true`, `target_language` from `--target-lang` (default `zh`), and `output_options=bilingual`.
 
-Use `/api/v1/jobs/parse` or `kolmopdf_parse_pdf`. Return the primary Markdown path and a brief preview.
+Use `kolmopdf_parse_pdf`, or the bundled `scripts/jobs.mjs parse` fallback described by the Skill. Return the primary Markdown path and a brief preview.
 
 Arguments: $ARGUMENTS

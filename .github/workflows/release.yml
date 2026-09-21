@@ -78,6 +78,7 @@ jobs:
             || (echo "::error::version mismatch between tag and manifests" && exit 1)
 
       - run: pnpm -r build
+      - run: chmod 755 packages/mcp-server/dist/index.js
 
       # npm Trusted Publishing (OIDC) via pnpm: `pnpm publish` delegates the
       # actual publish to the npm CLI, and the npm CLI bundled with Node 24

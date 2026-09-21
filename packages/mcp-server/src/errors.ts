@@ -22,19 +22,19 @@ export const ERROR_SPECS: Record<string, ErrorSpec> = {
   // --- API codes ---
   invalid_api_key: {
     message: "API key is missing or invalid.",
-    remediation: "Create a key at https://www.kolmopdf.com/api-keys (requires Plus/Pro).",
+    remediation: "Create a key at https://www.kolmopdf.com/api-keys. Every account, including PAYG, can create one API key.",
     httpStatus: 401,
     source: "api",
   },
   insufficient_points: {
     message: "Not enough credits.",
-    remediation: "Top up at https://www.kolmopdf.com/subscription.",
+    remediation: "Buy one-time credits at https://www.kolmopdf.com/credits — no subscription required. Credits are shared with the web account. Check the API key spending limit separately. Never start a purchase without the user's confirmation.",
     httpStatus: 402,
     source: "api",
   },
   points_deduction_failed: {
     message: "Credit deduction failed.",
-    remediation: "Retry; if it persists contact support.",
+    remediation: "Check your balance and API key limit. Buy one-time credits at https://www.kolmopdf.com/credits; do not retry a paid operation or purchase automatically.",
     httpStatus: 402,
     source: "api",
   },

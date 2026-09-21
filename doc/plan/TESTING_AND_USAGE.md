@@ -1,7 +1,7 @@
 # KolmoPDF Claude Plugin — 测试与使用文档
 
 > 当前路由规则见 [SKILL.md](../../plugins/kolmopdf/skills/kolmopdf/SKILL.md)，触发验收场景见 [ROUTING.md](../ROUTING.md)。下文 §3–9 是历史 MCP 集成测试计划，不代表每次用户请求都需调用 MCP、付费解析或执行整套测试。
-> 所有命令以 macOS / Linux 为基准；Windows 用户改用 PowerShell 等价命令。
+> 安装命令按客户端和系统分别说明；macOS 示例不依赖 GNU `timeout` 或额外安装的 `jq`。
 
 ## 1. 前置条件
 
@@ -17,7 +17,12 @@
 
 ```bash
 export KOLMOPDF_API_KEY=sk-xxxxxxxxxxxxxxxx
+claude
 ```
+
+该变量只会传给从同一 Shell 启动的进程。macOS 上从 Finder/Dock 启动的 IDE 或 Claude Desktop 不会自动读取当前终端的 `export`；应改用客户端私有 MCP 环境配置，并完整重启客户端。不要把真实 Key 写入项目文件或提交到 Git。
+
+MCP 默认把结果写入 `~/kolmopdf-output/<task_id>/`。如需自定义，设置 `KOLMOPDF_OUTPUT_DIR` 为可写的绝对路径。
 
 ---
 
@@ -50,7 +55,7 @@ mkdir -p ~/.codex/skills
 git clone --depth 1 https://github.com/komoai2026/claude-plugin /tmp/kolmopdf
 cp -r /tmp/kolmopdf/codex-skill/kolmopdf ~/.codex/skills/
 
-# 2. 可选：注册 MCP server；独立 Skill 可直接通过 Bash/curl 调用 API，无需此步骤
+# 2. 可选：注册 MCP server；独立 Skill 可直接通过随附 Node.js helper 调用 API，无需此步骤
 # 编辑 ~/.codex/config.toml，追加：
 ```
 
@@ -87,23 +92,36 @@ cp -r /tmp/kolmopdf/codex-skill/kolmopdf ~/.cursor/skills/
 }
 ```
 
+在 CLI 或从终端启动的 IDE 中，`command: "npx"` 通常足够。macOS GUI 客户端若报告 `spawn npx ENOENT`，先运行 `command -v npx`，再把配置中的 `command` 改成返回的绝对路径。
+
 ### 2.4 Claude Desktop（手动添加 MCP server）
 
-编辑 `~/Library/Application Support/Claude/claude_desktop_config.json`（macOS）或 `%APPDATA%\Claude\claude_desktop_config.json`（Windows）：
+编辑 `~/Library/Application Support/Claude/claude_desktop_config.json`（macOS）或 `%APPDATA%\Claude\claude_desktop_config.json`（Windows）。macOS 先查询实际路径：
+
+```bash
+command -v npx
+```
+
+配置示例；macOS 请把 `<ABSOLUTE_NPX_PATH>` 替换成上一步结果，Windows 可使用 `npx` 或 `npx.cmd` 的绝对路径：
 
 ```json
 {
   "mcpServers": {
     "kolmopdf": {
-      "command": "npx",
+      "command": "<ABSOLUTE_NPX_PATH>",
       "args": ["-y", "@kolmopdf/mcp-server"],
-      "env": { "KOLMOPDF_API_KEY": "sk-..." }
+      "env": {
+        "KOLMOPDF_API_KEY": "YOUR_API_KEY",
+        "KOLMOPDF_OUTPUT_DIR": "/Users/YOUR_NAME/kolmopdf-output"
+      }
     }
   }
 }
 ```
 
-> Claude Desktop 不支持 SKILL.md，因此仅获得 MCP 工具能力，无自动触发。
+Key 只应保存在客户端的私有配置中，不要复制到项目或对话。保存后用 `Cmd+Q`（macOS）或退出菜单（Windows）完整关闭并重新打开 Claude Desktop。
+
+> Claude Desktop 聊天界面手动配置后只获得 MCP 工具；Claude Code 的插件 Skill 仅在支持 Claude Code 插件的会话中加载。
 
 ---
 
@@ -326,9 +344,11 @@ export KOLMOPDF_API_KEY=sk-invalid
 
 ---
 
-## 7. CI smoke test 规范
+## 7. CI 与 smoke test 规范
 
-GitHub Actions secret 中注入测试 key 后，nightly 跑：
+每次 push / PR 在 Ubuntu x64、Windows x64、macOS Apple Silicon 和 macOS Intel 上运行 typecheck、单元测试、构建、CLI 版本检查和 Skill helper 测试，并校验实际 `process.arch`。插件 manifest 使用当前 Claude Code CLI 的 `plugin validate` 校验。
+
+GitHub Actions secret 中注入测试 key 后，nightly 在 Ubuntu 跑：
 
 | 用例 | 输入 | 验证 |
 |---|---|---|
@@ -350,7 +370,10 @@ GitHub Actions secret 中注入测试 key 后，nightly 跑：
 | 任务一直 `waiting` 不进入 `processing` | API 端单 key 上限 3 并发；用 `/kolmopdf:balance` 确认 key 有效 |
 | 公式渲染异常 | 检查下游 markdown renderer 是否支持 KaTeX；改用 `formula_format=bracket` |
 | 中文乱码 | 检查 markdown 文件 BOM；用 `iconv -f utf-8 -t utf-8 file.md` 标准化 |
-| ZIP 解压失败 | 检查 `KOLMOPDF_OUTPUT_DIR` 写入权限 |
+| ZIP 解压失败 | 检查 `KOLMOPDF_OUTPUT_DIR` 写入权限；默认目录是 `~/kolmopdf-output` |
+| 找不到输出文件 | 查看工具返回的绝对路径；不要按客户端当前目录猜测 |
+| macOS GUI 报 `spawn npx ENOENT` | 运行 `command -v npx`，把绝对路径写入该客户端的私有 MCP 配置 |
+| 工具报 `invalid_api_key`，但终端已 export | GUI 不继承另一个终端的环境；在客户端私有 MCP `env` 中配置并完整重启 |
 | 大文件上传中断 | 拉高 `KOLMOPDF_UPLOAD_TIMEOUT_MS`；检查网络稳定性（mainland China 用户可能需要 proxy） |
 | `npx -y` 卡住 | 第一次拉包时间较长，~30s 正常；若超过 2 min 检查 npm registry 配置 |
 

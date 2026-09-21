@@ -8,6 +8,6 @@ Follow `../skills/kolmopdf/SKILL.md` relative to this command file.
 
 Convert the supplied Markdown or ZIP. Default format: `word`.
 
-Use `/api/v1/jobs/convert` with `file` and `targetFormat`, or `kolmopdf_convert_markdown` with `file_path` and `target_format`. Return the result path.
+Use `kolmopdf_convert_markdown`, or the bundled `scripts/jobs.mjs convert` fallback described by the Skill. Return the result path.
 
 Arguments: $ARGUMENTS

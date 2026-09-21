@@ -25,10 +25,23 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm biome check .
+      - run: pnpm lint
 
-  typecheck:
-    runs-on: ubuntu-latest
+  platform-compat:
+    name: Platform compatibility (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            arch: x64
+          - os: windows-latest
+            arch: x64
+          - os: macos-latest
+            arch: arm64
+          - os: macos-15-intel
+            arch: x64
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -39,21 +52,12 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: node -e "if (process.arch !== '${{ matrix.arch }}') throw new Error('Expected ${{ matrix.arch }}, got ' + process.arch)"
       - run: pnpm -r typecheck
-
-  test-unit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
       - run: pnpm -r test:unit
+      - run: pnpm -r build
+      - run: node packages/mcp-server/dist/index.js --version
+      - run: node --test tests/skill-helper.test.mjs
 
   test-integration:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
@@ -79,13 +83,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      # Enable once the CLI exposes plugin validation in CI:
-      # - run: npx @anthropic-ai/claude-code plugin validate .
-      - name: Validate marketplace & plugin JSON
+      - name: Validate marketplace and plugin
         run: |
-          node -e "JSON.parse(require('fs').readFileSync('.claude-plugin/marketplace.json','utf8'))"
-          node -e "JSON.parse(require('fs').readFileSync('plugins/kolmopdf/.claude-plugin/plugin.json','utf8'))"
-          node -e "JSON.parse(require('fs').readFileSync('plugins/kolmopdf/.mcp.json','utf8'))"
+          npx -y @anthropic-ai/claude-code plugin validate .
+          npx -y @anthropic-ai/claude-code plugin validate plugins/kolmopdf
 
   mirror-codex-skill:
     runs-on: ubuntu-latest
@@ -96,3 +97,4 @@ jobs:
           diff plugins/kolmopdf/skills/kolmopdf/SKILL.md codex-skill/kolmopdf/SKILL.md
           diff plugins/kolmopdf/skills/kolmopdf/references/parameter-glossary.md codex-skill/kolmopdf/references/parameter-glossary.md
           diff plugins/kolmopdf/skills/kolmopdf/references/chain-recipes.md codex-skill/kolmopdf/references/chain-recipes.md
+          diff plugins/kolmopdf/skills/kolmopdf/scripts/jobs.mjs codex-skill/kolmopdf/scripts/jobs.mjs

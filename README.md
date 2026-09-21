@@ -16,13 +16,16 @@ Adding a marketplace and installing a plugin are separate steps:
 /plugin install kolmopdf@kolmopdf
 ```
 
-Set `KOLMOPDF_API_KEY` in your environment, then restart Claude Code:
+Set `KOLMOPDF_API_KEY` in the environment that launches Claude Code, then restart it:
 
 ```bash
 export KOLMOPDF_API_KEY=sk-xxxxxxxxxxxxxxxx
+claude
 ```
 
-Other clients (Codex CLI, Cursor, Claude Desktop): see [`doc/plan/TESTING_AND_USAGE.md`](doc/plan/TESTING_AND_USAGE.md) §2.
+On macOS, a variable exported in Terminal is inherited only by apps started from that shell. IDE and Claude Desktop sessions launched from Finder/Dock need the key in their private MCP settings or launch environment. If a GUI client cannot find `npx`, run `command -v npx` and use that absolute path in its MCP config.
+
+Other clients and platform-specific setup: see [`doc/plan/TESTING_AND_USAGE.md`](doc/plan/TESTING_AND_USAGE.md) §2.
 
 The standalone skill is also available from [`komoai2026/kolmopdf-skill`](https://github.com/komoai2026/kolmopdf-skill).
 
@@ -38,7 +41,7 @@ See [SKILL.md](plugins/kolmopdf/skills/kolmopdf/SKILL.md) for routing and cost r
 npx skills add komoai2026/kolmopdf-skill
 ```
 
-Configure `KOLMOPDF_API_KEY` in the agent's shell environment. The standalone skill uses Jobs API v1 directly through Bash/curl; MCP is optional. See the [skill instructions](plugins/kolmopdf/skills/kolmopdf/SKILL.md) and [chain recipes](plugins/kolmopdf/skills/kolmopdf/references/chain-recipes.md).
+Configure `KOLMOPDF_API_KEY` in the agent's launch environment. The standalone skill includes a zero-dependency Node.js Jobs API helper, so macOS does not need `jq`, GNU `timeout`, or Homebrew coreutils; MCP remains optional. See the [skill instructions](plugins/kolmopdf/skills/kolmopdf/SKILL.md) and [chain recipes](plugins/kolmopdf/skills/kolmopdf/references/chain-recipes.md).
 
 ## Tools
 

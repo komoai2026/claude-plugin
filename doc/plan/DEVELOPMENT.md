@@ -129,7 +129,7 @@ kolmopdf-claude-plugin/
 |---|---|---|---|
 | `KOLMOPDF_API_KEY` | 是 | — | 用户从 https://www.kolmopdf.com/api-keys 申请 |
 | `KOLMOPDF_BASE_URL` | 否 | `https://www.kolmopdf.com` | 仅企业/调试场景覆盖 |
-| `KOLMOPDF_OUTPUT_DIR` | 否 | `./kolmopdf-output` | 解压目标根目录（相对 cwd） |
+| `KOLMOPDF_OUTPUT_DIR` | 否 | `~/kolmopdf-output` | 解压目标根目录；可传绝对路径或相对当前工作目录的路径 |
 | `KOLMOPDF_POLL_INTERVAL_MS` | 否 | `2000` | 状态轮询周期（API 建议 1-3s） |
 | `KOLMOPDF_MAX_POLL_MINUTES` | 否 | `30` | 单任务客户端最长等待 |
 | `KOLMOPDF_HTTP_TIMEOUT_MS` | 否 | `60000` | 单次 HTTP 调用超时（upload/download 单独放宽） |

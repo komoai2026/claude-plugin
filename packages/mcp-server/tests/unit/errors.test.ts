@@ -46,7 +46,8 @@ describe("toMcpErrorResult", () => {
     expect(payload.http_status).toBe(402);
     expect(payload.points_required).toBe(20);
     expect(payload.current_points).toBe(5);
-    expect(payload.remediation).toContain("subscription");
+    expect(payload.remediation).toContain("https://www.kolmopdf.com/credits");
+    expect(payload.remediation).toContain("no subscription required");
   });
 
   it("coerces a plain Error into api_task_error", () => {

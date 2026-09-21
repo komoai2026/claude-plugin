@@ -1,7 +1,8 @@
 import { createWriteStream, mkdirSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { pipeline } from "node:stream/promises";
 import { type Entry, type ZipFile, open as yauzlOpen } from "yauzl";
+import { KolmoPdfError } from "./errors.js";
 
 export interface ExtractResult {
   markdownPath: string | null;
@@ -34,6 +35,31 @@ export function pickPrimaryMarkdownPath(
   return scored[0]?.path ?? null;
 }
 
+export function safeZipEntryPath(destDir: string, entryName: string): string {
+  const normalized = entryName.replace(/\\/g, "/");
+  const segments = normalized.split("/").filter((segment) => segment && segment !== ".");
+  if (
+    normalized.includes("\0") ||
+    normalized.startsWith("/") ||
+    /^[A-Za-z]:/.test(normalized) ||
+    segments.includes("..")
+  ) {
+    throw new KolmoPdfError("client_extract_failed", {
+      message: `Unsafe ZIP entry path: ${entryName}`,
+    });
+  }
+
+  const root = resolve(destDir);
+  const entryPath = resolve(root, ...segments);
+  const rel = relative(root, entryPath);
+  if (rel.startsWith("..") || isAbsolute(rel)) {
+    throw new KolmoPdfError("client_extract_failed", {
+      message: `Unsafe ZIP entry path: ${entryName}`,
+    });
+  }
+  return entryPath;
+}
+
 export async function extractZip(zipPath: string, destDir: string): Promise<ExtractResult> {
   mkdirSync(destDir, { recursive: true });
 
@@ -43,7 +69,7 @@ export async function extractZip(zipPath: string, destDir: string): Promise<Extr
   let imagesDir: string | null = null;
 
   for await (const entry of iterEntries(zipFile)) {
-    const entryPath = join(destDir, entry.fileName);
+    const entryPath = safeZipEntryPath(destDir, entry.fileName);
 
     if (entry.fileName.endsWith("/")) {
       mkdirSync(entryPath, { recursive: true });

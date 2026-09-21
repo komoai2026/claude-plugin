@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.2] — 2026-09-21
+
+### Fixed
+
+- Replaced the Skill's `jq` and GNU `timeout` dependency with a bundled Node.js Jobs API helper that runs on macOS, Linux, and Windows.
+- Made MCP output paths stable under the user's home directory and blocked output/ZIP paths that escape the configured root.
+- Treat unexpanded `${KOLMOPDF_API_KEY}` placeholders as a missing key instead of sending the placeholder to the API.
+- Derive `--version` from the package version during the build instead of a stale hard-coded constant.
+- Added Apple Silicon and Intel macOS CI coverage plus Windows/Linux, real Claude plugin validation, Unicode/path tests, and packaged helper tests.
+- Added macOS CLI, IDE, and Claude Desktop setup guidance for `npx`, environment variables, and output paths.
+- Preserved DOCX outputs instead of renaming their ZIP container to `.zip`, and documented correct helper paths for Claude Code, Codex, and Cursor.
+- Updated API-key and credit remediation for Free/PAYG accounts, one-time credit purchases, and safe confirmation boundaries.
+
 ## [1.2.1] — 2026-09-17
 
 ### Changed

@@ -8,6 +8,6 @@ Follow `../skills/kolmopdf/SKILL.md` relative to this command file.
 
 Translate the supplied PDF. Defaults: `--from en`, `--to zh`, `--mode translated_only`.
 
-Use `/api/v1/jobs/translate-pdf` with `sourceLanguage`, `targetLanguage`, and `layoutModes`, or `kolmopdf_translate_pdf` with the corresponding snake_case arguments. Return the downloaded or extracted PDF paths.
+Use `kolmopdf_translate_pdf`, or the bundled `scripts/jobs.mjs translate` fallback described by the Skill. Return the downloaded or extracted PDF paths.
 
 Arguments: $ARGUMENTS

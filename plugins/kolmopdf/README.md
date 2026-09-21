@@ -16,9 +16,13 @@ Create a key at https://www.kolmopdf.com/api-keys, then configure `KOLMOPDF_API_
 
 Do not paste the key into a conversation or commit it to a project. An already-running agent does not inherit changes made in another terminal; restart from the configured environment or use the client's private settings. Check setup with the balance tool, not a paid document-processing job.
 
+On macOS, Terminal exports reach only processes started from that Terminal. Finder/Dock-launched IDE or Desktop sessions need their own private MCP environment. If a GUI client reports `spawn npx ENOENT`, run `command -v npx` and use the returned absolute path in its MCP configuration.
+
+MCP outputs default to `~/kolmopdf-output/<task_id>/`. Set `KOLMOPDF_OUTPUT_DIR` to another writable absolute path when needed.
+
 ## Usage
 
-Supports PDF conversion, translation, reading, summaries, analysis, and Q&A. See [SKILL.md](skills/kolmopdf/SKILL.md) for routing, cost, and API instructions.
+Supports PDF conversion, translation, reading, summaries, analysis, and Q&A. See [SKILL.md](skills/kolmopdf/SKILL.md) for routing and cost rules. When MCP is unavailable, the bundled `skills/kolmopdf/scripts/jobs.mjs` helper runs the Jobs API on Node.js 20+ without `jq` or GNU `timeout`.
 
 ## Tools
 

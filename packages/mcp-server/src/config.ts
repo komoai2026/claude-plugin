@@ -6,6 +6,9 @@
  * The first authenticated tool call surfaces a missing key as an MCP error.
  */
 
+import { homedir } from "node:os";
+import { resolve } from "node:path";
+
 export interface KolmoPdfConfig {
   /** Resolved at call time; may be undefined until the user sets it. */
   apiKey: string | undefined;
@@ -19,7 +22,7 @@ export interface KolmoPdfConfig {
 
 const DEFAULTS = {
   baseUrl: "https://www.kolmopdf.com",
-  outputDir: "./kolmopdf-output",
+  outputDir: resolve(homedir(), "kolmopdf-output"),
   pollIntervalMs: 2000,
   maxPollMinutes: 30,
   httpTimeoutMs: 60_000,
@@ -36,16 +39,22 @@ function trimTrailingSlash(url: string): string {
   return url.replace(/\/+$/, "");
 }
 
+/** Treat an empty or unexpanded plugin placeholder as a missing API key. */
+export function normalizeApiKey(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  if (!trimmed || /^\$\{KOLMOPDF_API_KEY(?::-[^}]*)?\}$/.test(trimmed)) return undefined;
+  return trimmed;
+}
+
 /**
  * Build a config object from the current process environment.
  * Reads on every call so live env changes are picked up.
  */
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): KolmoPdfConfig {
-  const apiKeyRaw = env.KOLMOPDF_API_KEY?.trim();
   return {
-    apiKey: apiKeyRaw && apiKeyRaw.length > 0 ? apiKeyRaw : undefined,
+    apiKey: normalizeApiKey(env.KOLMOPDF_API_KEY),
     baseUrl: trimTrailingSlash(env.KOLMOPDF_BASE_URL?.trim() || DEFAULTS.baseUrl),
-    outputDir: env.KOLMOPDF_OUTPUT_DIR?.trim() || DEFAULTS.outputDir,
+    outputDir: resolve(env.KOLMOPDF_OUTPUT_DIR?.trim() || DEFAULTS.outputDir),
     pollIntervalMs: intFromEnv(env.KOLMOPDF_POLL_INTERVAL_MS, DEFAULTS.pollIntervalMs),
     maxPollMinutes: intFromEnv(env.KOLMOPDF_MAX_POLL_MINUTES, DEFAULTS.maxPollMinutes),
     httpTimeoutMs: intFromEnv(env.KOLMOPDF_HTTP_TIMEOUT_MS, DEFAULTS.httpTimeoutMs),

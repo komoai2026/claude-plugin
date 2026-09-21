@@ -16,13 +16,15 @@ MCP server for [KolmoPDF](https://www.kolmopdf.com) — high-fidelity PDF→Mark
 }
 ```
 
+On macOS GUI clients, `npx` may not be on the app's PATH even when it works in Terminal. Run `command -v npx` and use that absolute path as `command`. Put `KOLMOPDF_API_KEY` in the client's private MCP `env`, then fully restart the app.
+
 ## Environment variables
 
 | Variable | Required | Default | Description |
 | --- | --- | --- | --- |
 | `KOLMOPDF_API_KEY` | yes | — | API key from https://www.kolmopdf.com/api-keys |
 | `KOLMOPDF_BASE_URL` | no | `https://www.kolmopdf.com` | Override for enterprise/debug |
-| `KOLMOPDF_OUTPUT_DIR` | no | `./kolmopdf-output` | Extraction root |
+| `KOLMOPDF_OUTPUT_DIR` | no | `~/kolmopdf-output` | Absolute or cwd-relative extraction root |
 | `KOLMOPDF_POLL_INTERVAL_MS` | no | `2000` | Status poll interval |
 | `KOLMOPDF_MAX_POLL_MINUTES` | no | `30` | Max client-side wait |
 | `KOLMOPDF_HTTP_TIMEOUT_MS` | no | `60000` | Per-call HTTP timeout |

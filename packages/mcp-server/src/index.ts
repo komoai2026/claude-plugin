@@ -50,7 +50,8 @@ import {
   translatePdfName,
 } from "./tools/translate-pdf.js";
 
-const VERSION = "1.1.0";
+declare const __KOLMOPDF_VERSION__: string;
+const VERSION = __KOLMOPDF_VERSION__;
 
 /** Build the per-call tool context with a lazily-constructed API client. */
 function buildContext(): ToolContext {

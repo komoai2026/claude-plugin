@@ -6,6 +6,7 @@ import type { McpSuccessResult, ToolContext } from "../context.js";
 import { jsonResult } from "../context.js";
 import { KolmoPdfError } from "../errors.js";
 import { extractZip } from "../extract.js";
+import { resolveOutputRoot } from "../output.js";
 import { MAX_FILE_BYTES, MAX_PAGES, readFileSize, readPageCount } from "../pages.js";
 import { pollUntilComplete } from "../polling.js";
 import { sniffFile } from "../sniff.js";
@@ -108,7 +109,7 @@ export async function parsePdfHandler(
   await ctx.progress?.report("[downloading] Fetching result...");
 
   const subdir = args.output_subdir || taskId;
-  const outputRoot = resolve(ctx.config.outputDir, subdir);
+  const outputRoot = resolveOutputRoot(ctx.config.outputDir, subdir);
   mkdirSync(outputRoot, { recursive: true });
 
   // Always download to a temp name first — server may return ZIP even when images_as_url
