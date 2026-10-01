@@ -23,7 +23,7 @@ export const parsePdfInputSchema = z.object({
   table_mode: z.enum(["markdown", "image"]).optional(),
   formula_format: z.enum(["dollar", "bracket"]).optional(),
   enable_translation: z.boolean().optional(),
-  target_language: z.enum(["zh", "en", "ja", "ko", "fr", "de", "es", "ru"]).optional(),
+  target_language: z.enum(["zh", "en", "ja", "ko", "fr", "de", "es", "ru", "pt"]).optional(),
   output_options: z.array(z.enum(["original", "translated", "bilingual"])).optional(),
   images_as_url: z.boolean().optional(),
   skip_rotation_detection: z.boolean().optional(),

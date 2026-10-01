@@ -1,4 +1,6 @@
-# Format Conversion API Guide
+# Format Conversion API Guide (Legacy)
+
+> **Archived compatibility reference.** New integrations must use the [current Jobs API guide](https://www.kolmopdf.com/api-docs), including its cross-platform quick start and agent setup. This document describes older endpoints and response shapes; it is not the current onboarding guide.
 
 ## Basic Information
 

@@ -68,7 +68,7 @@ Configure `KOLMOPDF_API_KEY` in the agent's launch environment. The standalone s
 | `plugins/kolmopdf` | Claude Code plugin (skill, commands, manifest) |
 | `.claude-plugin/marketplace.json` | Marketplace entry |
 | `codex-skill/kolmopdf` | Codex CLI / Cursor skill mirror |
-| `doc/` | API guides and project plans |
+| `doc/` | Project plans and archived legacy API guides; use the [current Jobs API guide](https://www.kolmopdf.com/api-docs) for new integrations |
 
 ## Development
 

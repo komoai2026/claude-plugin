@@ -1,4 +1,6 @@
-# PDF Parsing API Guide
+# PDF Parsing API Guide (Legacy)
+
+> **Archived compatibility reference.** New integrations must use the [current Jobs API guide](https://www.kolmopdf.com/api-docs), including its cross-platform quick start and agent setup. This document describes older endpoints, response shapes, and plan names; it is not the current onboarding guide. Free, PAYG, Go, and Plus accounts can create one API key; Pro supports ten. A subscription is not required.
 
 ## Basic Information
 

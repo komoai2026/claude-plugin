@@ -13,12 +13,17 @@
 | 积分 | 仅安装／认证检查不消耗处理积分；下文历史收费集成测试按所选任务估算，不默认执行整套用例 |
 | 网络 | 可访问 `https://www.kolmopdf.com` |
 
-环境变量设置：
+在启动目标客户端的终端中配置环境变量（占位符需替换为自己的 Key）：
 
 ```bash
-export KOLMOPDF_API_KEY=sk-xxxxxxxxxxxxxxxx
-claude
+export KOLMOPDF_API_KEY='YOUR_API_KEY'
 ```
+
+```powershell
+$env:KOLMOPDF_API_KEY = 'YOUR_API_KEY'
+```
+
+随后从同一终端启动实际使用的 Claude Code、Codex 或 IDE；不要为使用另一个客户端而额外安装 Claude Code。
 
 该变量只会传给从同一 Shell 启动的进程。macOS 上从 Finder/Dock 启动的 IDE 或 Claude Desktop 不会自动读取当前终端的 `export`；应改用客户端私有 MCP 环境配置，并完整重启客户端。不要把真实 Key 写入项目文件或提交到 Git。
 
@@ -50,10 +55,8 @@ claude plugin install kolmopdf@kolmopdf
 ### 2.2 Codex CLI
 
 ```bash
-# 1. 克隆 skill 到 Codex 标准路径
-mkdir -p ~/.codex/skills
-git clone --depth 1 https://github.com/komoai2026/claude-plugin /tmp/kolmopdf
-cp -r /tmp/kolmopdf/codex-skill/kolmopdf ~/.codex/skills/
+# 1. 独立安装完整 Skill；Windows、macOS、Linux 使用相同命令
+npx skills add komoai2026/kolmopdf-skill --skill kolmopdf --agent codex --global --yes
 
 # 2. 可选：注册 MCP server；独立 Skill 可直接通过随附 Node.js helper 调用 API，无需此步骤
 # 编辑 ~/.codex/config.toml，追加：
@@ -73,9 +76,8 @@ env = { KOLMOPDF_API_KEY = "sk-..." }
 ### 2.3 Cursor
 
 ```bash
-# 1. 安装 skill 到 Cursor 用户 skill 路径
-mkdir -p ~/.cursor/skills
-cp -r /tmp/kolmopdf/codex-skill/kolmopdf ~/.cursor/skills/
+# 1. 独立安装完整 Skill；不依赖前面的 Codex 安装步骤或 /tmp 目录
+npx skills add komoai2026/kolmopdf-skill --skill kolmopdf --agent cursor --global --yes
 
 # 2. 可选 MCP server 注册：编辑 ~/.cursor/mcp.json；不配置也可直接调用 API
 ```
