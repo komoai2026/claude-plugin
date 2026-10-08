@@ -7,7 +7,7 @@ import { jsonResult } from "../context.js";
 import { KolmoPdfError } from "../errors.js";
 import { extractZip } from "../extract.js";
 import { resolveOutputRoot } from "../output.js";
-import { MAX_FILE_BYTES, MAX_PAGES, readFileSize, readPageCount } from "../pages.js";
+import { MAX_FILE_BYTES, MAX_PAGES, readFileSize, readPageCountForSubmission } from "../pages.js";
 import { pollUntilComplete } from "../polling.js";
 import { extensionForKind, sniffFile } from "../sniff.js";
 
@@ -56,8 +56,8 @@ export async function translatePdfHandler(
     throw new KolmoPdfError("translate_pdf_file_too_large");
   }
 
-  const pageCount = await readPageCount(filePath);
-  if (pageCount > MAX_PAGES) {
+  const pageCount = await readPageCountForSubmission(filePath);
+  if (pageCount !== null && pageCount > MAX_PAGES) {
     throw new KolmoPdfError("translate_pdf_page_limit_exceeded");
   }
 

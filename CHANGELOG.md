@@ -6,6 +6,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.4] — 2026-10-08
+
+### Fixed
+
+- Count readable PDFs with incomplete objects after the last complete EOF without modifying the original file or uploaded bytes; retain incremental PDF revisions.
+- Let parse/translate submissions defer unavailable local page counts to server-side validation instead of returning a fabricated API HTTP 500.
+- Report unavailable local credit estimates explicitly without guessing pages or declaring the PDF unreadable. Added regression tests for trailing data, incremental updates, invalid PDFs, and the 800-page limit.
+
 ## [1.2.2] — 2026-09-21
 
 ### Fixed
