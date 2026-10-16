@@ -55,7 +55,7 @@ it.each(["invalid", "broken"])("does not manufacture counts for %s PDFs or fabri
   await expect(readPageCountForSubmission(path)).resolves.toBeNull();
   const error = await readPageCount(path).catch(error => error);
   expect(error).toBeInstanceOf(KolmoPdfError);
-  const payload = JSON.parse(toMcpErrorResult(error).content[0]!.text);
+  const payload = JSON.parse(toMcpErrorResult(error).content[0]?.text ?? "");
   expect(payload.error_code).toBe("client_local_validation");
   expect(payload.http_status).toBeNull();
   expect(payload.message).toContain("does not mean the PDF is unreadable");
@@ -71,7 +71,7 @@ it("unavailable local estimation does not fetch a balance or guess credits", asy
 it("estimate uses the latest revision's exact count when trailing debris is ignorable", async () => {
   const context = { getClient: () => ({ getBalance: async () => ({ points: 100 }) }) } as unknown as ToolContext;
   const result = await estimateCostHandler({ file_path: join(directory, "incremental.pdf"), operation: "parse" }, context);
-  const payload = JSON.parse(result.content[0]!.text);
+  const payload = JSON.parse(result.content[0]?.text ?? "");
   expect(payload.pages).toBe(2);
   expect(payload.estimated_credits).toBe(4);
 });
@@ -96,6 +96,6 @@ describe.each(["parse", "translate"] as const)("%s submission delegates unknown 
       : translatePdfHandler(translatePdfInputSchema.parse({ file_path }), context);
     await expect(result).rejects.toMatchObject({ errorCode: "parse_file_invalid", httpStatus: 400 });
     expect(submit).toHaveBeenCalledTimes(1);
-    expect(submit.mock.calls[0]![0]).toEqual(Buffer.from(inputs.invalid));
+    expect(submit.mock.calls[0]?.[0]).toEqual(Buffer.from(inputs.invalid));
   });
 });
