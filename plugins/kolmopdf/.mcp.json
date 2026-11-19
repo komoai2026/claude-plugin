@@ -2,7 +2,7 @@
   "mcpServers": {
     "kolmopdf": {
       "command": "npx",
-      "args": ["-y", "@kolmopdf/mcp-server"],
+      "args": ["-y", "@kolmopdf/mcp-server@1.2.5"],
       "env": {
         "KOLMOPDF_API_KEY": "${KOLMOPDF_API_KEY:-}"
       }

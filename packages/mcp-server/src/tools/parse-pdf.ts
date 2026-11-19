@@ -20,6 +20,7 @@ export const parsePdfDescription =
 
 export const parsePdfInputSchema = z.object({
   file_path: z.string().describe("Absolute or cwd-relative path to a local PDF file."),
+  upload_id: z.string().uuid().optional().describe('Resume a previous interrupted upload ID.'),
   table_mode: z.enum(["markdown", "image"]).optional(),
   formula_format: z.enum(["dollar", "bracket"]).optional(),
   enable_translation: z.boolean().optional(),
@@ -80,6 +81,7 @@ export async function parsePdfHandler(
   const submitResult = await client.parse(
     fileBuffer,
     {
+      upload_id: args.upload_id,
       table_mode: args.table_mode,
       formula_format: args.formula_format,
       enable_translation: args.enable_translation,

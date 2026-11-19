@@ -6,6 +6,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.5] — 2026-11-19
+
+- Resume large Job uploads at the last confirmed block, and replay a submission with the same upload ID without creating another job.
+- Use bearer authentication without duplicating credentials in a custom header.
+
 ## [1.2.4] — 2026-10-08
 
 ### Fixed

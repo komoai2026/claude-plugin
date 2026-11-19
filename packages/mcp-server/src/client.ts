@@ -1,3 +1,4 @@
+import { uploadJob } from './jobs-upload.mjs';
 import { randomUUID } from "node:crypto";
 import type { Writable } from "node:stream";
 import { Readable } from "node:stream";
@@ -12,6 +13,7 @@ export interface KolmoPdfClientOptions {
 }
 
 export interface ParseForm {
+  upload_id?: string;
   table_mode?: "markdown" | "image";
   formula_format?: "dollar" | "bracket";
   enable_translation?: boolean;
@@ -119,13 +121,14 @@ export class KolmoPdfClient {
 
   private headers(): Record<string, string> {
     return {
-      "X-API-Key": this.apiKey,
       Authorization: `Bearer ${this.apiKey}`,
     };
   }
 
   private async jsonRequest(url: string, init: RequestInit): Promise<Record<string, unknown>> {
-    const res = await fetch(url, init);
+    const res = init.body instanceof FormData
+      ? await uploadJob(url, init.body, init.headers as Record<string,string>, this.uploadTimeoutMs)
+      : await fetch(url, init);
     let body: Record<string, unknown> = {};
     const text = await res.text();
     try {
@@ -206,7 +209,7 @@ export class KolmoPdfClient {
 
     const body = await this.jsonRequest(`${this.jobsBase}/parse`, {
       method: "POST",
-      headers: { ...this.headers(), "Idempotency-Key": randomUUID() },
+      headers: { ...this.headers(), "Idempotency-Key": form.upload_id || randomUUID() },
       body: fd,
       signal: AbortSignal.timeout(this.uploadTimeoutMs),
     });
